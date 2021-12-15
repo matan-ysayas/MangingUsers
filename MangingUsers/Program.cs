@@ -107,14 +107,19 @@ static void AddUser()
         User newUser = new User(userFisrtName, userlastName, userYearOfBirth, userEmail);
 
         crateUserFile(newUser);
+        Console.WriteLine("User added successfully");
     }
-    catch (FormatException ex)
+
+    catch (FormatException)
     {
-        Console.WriteLine(ex.Message);
+        Console.WriteLine("Wrong argument Try again ");
         AddUser();
 
     }
-
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
 
 }
 
@@ -124,26 +129,35 @@ static void editUser()
     {
         Console.WriteLine("enter first name");
         string userFisrtName = Console.ReadLine();
-        Console.WriteLine("enter last name");
-        string userlastName = Console.ReadLine();
-        Console.WriteLine("enter year of birth");
-        int userYearOfBirth = int.Parse(Console.ReadLine());
-        Console.WriteLine("enter email name");
-        string userEmail = Console.ReadLine();
-
-        User newUser = new User(userFisrtName, userlastName, userYearOfBirth, userEmail);
-        FileStream fs = new FileStream($@"c:\test\{newUser.FirstName}.txt", FileMode.Create);
-        using (StreamWriter writer = new StreamWriter(fs))
+        if (File.Exists($@"c:\test\{userFisrtName}.txt"))
         {
+            Console.WriteLine("enter last name");
+            string userlastName = Console.ReadLine();
+            Console.WriteLine("enter year of birth");
+            int userYearOfBirth = int.Parse(Console.ReadLine());
+            Console.WriteLine("enter email name");
+            string userEmail = Console.ReadLine();
+
+            User newUser = new User(userFisrtName, userlastName, userYearOfBirth, userEmail);
+            FileStream fs = new FileStream($@"c:\test\{newUser.FirstName}.txt", FileMode.Create);
+            using (StreamWriter writer = new StreamWriter(fs))
+            {
 
 
-            writer.WriteLine($"{newUser.FirstName}|| {newUser.LastName}||{newUser.YearOfBirth}||{newUser.Email}");
+                writer.WriteLine($"{newUser.FirstName}|| {newUser.LastName}||{newUser.YearOfBirth}||{newUser.Email}");
 
+            }
         }
-    }catch(FormatException ex)
+        else { Console.WriteLine("user is not exists "); }
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine("Wrong argument Try again ");
+        editUser();
+    }
+    catch (Exception ex)
     {
         Console.WriteLine(ex.Message);
-        editUser();
     }
 
 
@@ -162,7 +176,8 @@ static void deleteUser()
             Console.WriteLine("file deleted");
         }
         else Console.WriteLine("file not exists");
-    }catch(Exception ex)
+    }
+    catch (Exception ex)
     {
         Console.WriteLine(ex.Message);
     }
@@ -185,7 +200,8 @@ static void showUser()
             }
         }
         else Console.WriteLine("file not exists");
-    }catch (Exception ex)
+    }
+    catch (Exception ex)
     {
         Console.WriteLine(ex.Message);
     }
@@ -198,35 +214,44 @@ static void showUser()
 
 void UserApp()
 {
-    Console.WriteLine("for add user press 1\n for edit user press 2 \n for delete user press 3 \n for showing user press 4");
-    int option = int.Parse(Console.ReadLine());
-    switch (option)
+    try
     {
-        case 1:
-            AddUser();
+        Console.WriteLine("for add user press 1\n for edit user press 2 \n for delete user press 3 \n for showing user press 4");
+        int option = int.Parse(Console.ReadLine());
+        switch (option)
+        {
+            case 1:
+                AddUser();
 
-            UserApp();
+                UserApp();
 
-            break;
-        case 2:
+                break;
+            case 2:
 
-            editUser();
-            UserApp();
-            break;
-        case 3:
-            deleteUser();
-            UserApp();
-            break;
+                editUser();
+                UserApp();
+                break;
+            case 3:
+                deleteUser();
+                UserApp();
+                break;
 
-        case 4:
-            showUser();
-            UserApp();
+            case 4:
+                showUser();
+                UserApp();
 
-            break;
-
+                break;
+            default:
+                Console.WriteLine("Choose one of the options");
+                UserApp();
+                break;
+        }
     }
-
-
+    catch (FormatException) { 
+        Console.WriteLine("value must be number try again");
+        UserApp();
+    }
+    catch (Exception ex) { Console.WriteLine(ex.Message); }
 }
 
 UserApp();
